@@ -15,6 +15,7 @@ import (
 var db *sql.DB
 
 func Signup(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Inside Signup")
 	var user models.User
 	e := json.NewDecoder(r.Body).Decode(&user)
 	if e != nil {
@@ -39,16 +40,19 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	//hash password : slice of byte
 	hash, e := bcrypt.GenerateFromPassword([]byte(user.Passwords), bcrypt.DefaultCost)
 	if e != nil {
-		log.Fatalln(err)
+		log.Fatalln(e)
 	}
 	fmt.Println("Encrypted password (Hash) ", hash)
 	fmt.Println("password recieved ", user.Passwords)
 	//set it to hash
 	user.Passwords = string(hash)
 	//now we need to store this user in db with hashed password
-	db = driver.GetDBConnection()
+	e = driver.InsertUser(&user)
+	/*db = driver.GetDBConnection()
 	st := "insert into users (email,password) values ($1,$2) RETURNING id;"
 	e = db.QueryRow(st, user.Email, user.Passwords).Scan(&user.ID)
+	*/
+
 	if e != nil {
 		err.Message = fmt.Sprint("Internal server error while insertion ", e)
 		utils.RespondError(w, http.StatusInternalServerError, err)
@@ -56,6 +60,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.Passwords = ""
+	log.Println("The id returned ", user.ID)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }
@@ -114,13 +119,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln(e)
 	}
 	jsonwebtoken := models.JWT{tokenstr}
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(jsonwebtoken)
 
 }
 func protectedEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("protectedEndpoint invoked")
 	fmt.Println("HURRAYYYYYYYYYYYYYYYYYYYYYYY")
-
 }

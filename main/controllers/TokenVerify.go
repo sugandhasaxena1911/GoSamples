@@ -13,8 +13,8 @@ import (
 func TokenVerifyMiddleWare(next http.HandlerFunc) http.HandlerFunc {
 	fmt.Println("TokenVerifyMiddleWare invoked")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var eobj models.Error
-		authHeader := r.Header.Get("Authorization")
+		var err models.Error
+		authHeader := r.Header.Get("Authorization") // Bearer hdjejefjegffdhfajhfkjfjfhjfdjhfdvjbhdv
 		fmt.Println(authHeader)
 		//string to slice
 		bearertoken := strings.Split(authHeader, " ")
@@ -23,29 +23,35 @@ func TokenVerifyMiddleWare(next http.HandlerFunc) http.HandlerFunc {
 			authtoken := bearertoken[1]
 			//check if token valid
 			token, error := jwt.Parse(authtoken, func(token *jwt.Token) (interface{}, error) {
-				fmt.Printf("token%+v ", token)
+				fmt.Printf("token before is   %+v ", token)
+				// something related to assertion
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("There was error in token")
+					return nil, fmt.Errorf("There was error in token siging method")
 				}
 				return []byte(os.Getenv("SECRET")), nil
 			})
+			fmt.Printf("token after is   %+v ", token)
+			fmt.Println("\nError  is", error)
+
 			if error != nil {
-				eobj.Message = error.Error()
-				utils.RespondError(w, http.StatusUnauthorized, eobj)
+				err.Message = error.Error()
+				utils.RespondError(w, http.StatusUnauthorized, err)
 				return
 			}
 
 			fmt.Println("TOKEN : ", token) // valid is true
+			//t, _ := token.Claims.GetExpirationTime()
+			fmt.Println("Token is VALID , claims is ", token.Claims)
 			if token.Valid {
 				next.ServeHTTP(w, r)
 			} else {
-				eobj.Message = error.Error()
-				utils.RespondError(w, http.StatusUnauthorized, eobj)
+				err.Message = error.Error()
+				utils.RespondError(w, http.StatusUnauthorized, err)
 				return
 			}
 		} else {
-			eobj.Message = "Token is not Valid "
-			utils.RespondError(w, http.StatusUnauthorized, eobj)
+			err.Message = "Token is not Valid "
+			utils.RespondError(w, http.StatusUnauthorized, err)
 			return
 		}
 

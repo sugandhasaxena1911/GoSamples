@@ -26,6 +26,5 @@ func HandleAccountRequests() {
 	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
 	router.HandleFunc("/login", controllers.Login).Methods("POST")
 	router.HandleFunc("/protected", controllers.TokenVerifyMiddleWare(controllers.ProtectedEndpoint)).Methods("POST")
-
 	http.ListenAndServe(":8000", router)
 }

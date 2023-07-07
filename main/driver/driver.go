@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/lib/pq"
+	"github.com/sugandhasaxena1911/GoSamples/main/models"
 	"log"
 	"os"
 )
@@ -26,4 +27,11 @@ func GetDBConnection() *sql.DB {
 		fmt.Println("Connection established successfully ", db)
 	}
 	return db
+}
+
+func InsertUser(user *models.User) error {
+	db = GetDBConnection()
+	st := "insert into users (email,password) values ($1,$2) RETURNING id;"
+	e := db.QueryRow(st, user.Email, user.Passwords).Scan(&user.ID)
+	return e
 }
