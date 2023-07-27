@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -13,11 +14,13 @@ type Customer struct {
 	Zipcode string `json:"zipcode" xml:"zipcode"`
 }
 
-func Greet(w http.ResponseWriter, r *http.Request) {
+func greet(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello	 World !")
 }
 
-func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
+func getAllCustomers(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Inside")
+
 	customers := []Customer{
 		{Name: "Sugandha ", Zipcode: "5660056", City: "Lucknow"},
 		{Name: "Manu ", Zipcode: "11", City: "Dubai"},
@@ -35,4 +38,20 @@ func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(&customers)
 	}
 
+}
+
+func getCustomer(w http.ResponseWriter, r *http.Request) {
+	//returns route variables
+	fmt.Println("Inside2")
+
+	m1 := mux.Vars(r)
+	fmt.Println(m1)
+
+	custId := m1["customer_id"]
+	fmt.Println(custId)
+	fmt.Fprint(w, custId)
+}
+func createCustomer(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Fprint(w, "Its a POST method ")
 }
