@@ -1,0 +1,25 @@
+Ok, but I think in a layered architecture, 
+the domain entities can be agnostic too, for instance, Let's say I may decide to use for instance mongoDAO, insetead of MySQL dao, and it would not be so "dependent" on it, i would just change "a line", like the one with hexagonal. – 
+codemonkey
+ Jan 23, 2022 at 13:31
+@codemonkey There's a difference in where you change that line of code. In a layered architecture, 
+you change your business layer. In a hexagonal architecture (ports and adapters), 
+you leave your core application completely unchanged and instead swap the database-specific adapter,
+ so basically architecture-level dependency injection. 
+Personally, I think that ports & adapters is overkill and layers are perfectly fine for a lot of software, 
+like smallish CRUD apps. But ideas like DDD, microservices, and onion architectures clearly
+ have a lot of appeal in larger and more enterprisey software.
+
+In layered architecture, the UI is the first interaction point and triggers processes in the Service layer, 
+which gets its data from the database (layer). However, these interaction points are hardwired, 
+the API of the database layer is defined by the database needs and a change in deeper layers often requires
+ changes in upper layers, e.g., the UI integration.
+
+In hexagonal architecture, the business logic is at the center, and it just uses an database adapter 
+that was provided at the start and conforms to the API (= port) that the business layer expects to do its job -
+ and if the some service is not conforming to the business API, it is adapted to that interface.
+
+However, this is the static architectural view. In the end, both architectures produce a very similar
+ call stack during run time. The UI still is the first interaction point, 
+an event triggers processes through the input port of the business API,
+ which further calls a database adapter... because the user experience and end results should be the same.

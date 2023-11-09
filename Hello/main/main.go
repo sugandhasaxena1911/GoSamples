@@ -37,7 +37,6 @@ func main() {
 			todo, e := CallTodoApi(id)
 			if e != nil {
 
-				''
 			}
 			ch1 <- todo
 			//wg.Done()

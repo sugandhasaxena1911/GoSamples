@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/sugandhasaxena1911/GoSamples/main/driver"
 	"github.com/sugandhasaxena1911/GoSamples/main/models"
 	"github.com/sugandhasaxena1911/GoSamples/main/utils"
 	"golang.org/x/crypto/bcrypt"
-	"log"
-	"net/http"
 )
 
 var db *sql.DB
@@ -118,7 +119,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if e != nil {
 		log.Fatalln(e)
 	}
-	jsonwebtoken := models.JWT{tokenstr}
+	jsonwebtoken := models.JWT{Token: tokenstr}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(jsonwebtoken)

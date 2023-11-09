@@ -1,0 +1,128 @@
+CREATE TABLE customers(
+   customer_id  serial ,
+   name text not null,
+   date_of_birth date not null ,
+   city text not null,
+zipcode text not null,
+status text not null,
+   
+   PRIMARY KEY( customer_id)
+);
+
+
+INSERT INTO customers(customer_id,name ,date_of_birth,city ,zipcode ,status )
+VALUES (1, 'Paul', '2001-07-13', 'California', '67766','Active');
+
+INSERT INTO customers(customer_id,name ,date_of_birth,city ,zipcode ,status )
+VALUES (3, 'Harry', '2005-07-15', 'London', '67745','Active');
+
+create table accounts
+(
+account_id serial ,
+customer_id integer not null,
+opening_date date not null ,
+account_type text not null,
+amount integer not null,
+status text not null 
+)
+
+Insert into accounts(customer_id,opening_date,account_type,amount,status)
+values(
+1,'2001-07-13','savings',5000,'active'
+)
+
+account_type 
+s : savings 
+c : current 
+f : fixed
+
+status :
+1 : active
+2 : inactive
+3 : dormant 
+
+
+----------------------------
+get account
+--------------------------------
+
+txns
+------
+transaction_id 
+account_id
+amount
+transaction_type
+transaction_date
+
+
+create table transactions(
+txn_id serial ,
+account_id integer not null,      cannot be <0
+amount integer not null,
+txn_type text not null ,          w : withdrawal , d : deposit , amount should be present if w 
+txn_date date not null
+)
+
+return updated balance , txn_id 
+insert into transactions(account_id,amount,txn_type,txn_date) values 
+
+
+why in struct date of birth is string and not date . 
+
+	sqlst := "insert into transactions(account_id,amount,txn_type,txn_date) values ($1,$2,$3,$4) RETURNING txn_id"
+	//err = txnrepodb.client.QueryRow(sqlst, txns.Account_id, txns.Amount, txns.Txn_type, txns.Txn_date).Scan(&id)
+logger.Info("the id returned is " + fmt.Sprintln(id))
+
+
+
+sqlst := "insert into transactions(account_id,amount,txn_type,txn_date) values ($1,$2,$3,$4)"
+	result, err := tx.Exec(sqlst, txns.Account_id, txns.Amount, txns.Txn_type, txns.Txn_date)
+	if err != nil {
+		logger.Info("issue " + fmt.Sprintln(err))
+		return nil, errs.NewUnexpectedError("Some network problem : DB Issue")
+	}
+
+
+	id, err = result.LastInsertId()
+
+
+
+
+
+
+datta sai , --> apple amo project 
+mansi parwal 
+alexadra 
+
+
+create table users_s(
+id serial,
+username text not null,
+password text not null ,
+role text not null,
+customer_id integer ,
+created_on date not null)
+
+
+insert into users_s(username ,password ,role ,customer_id ,created_on)
+values()
+insert into users_s(username ,password ,role ,customer_id ,created_on)
+values('suggu',
+'&*&*&#',
+'admin',null,
+'2001-07-13')
+
+select U.username,U.role, U.customer_id , array_agg(A.account_id)
+from users_s U LEFT OUTER JOIN accounts A 
+ON
+U.customer_id = A.customer_id
+where 
+U.username ='suggu6'
+group by U.username, U.role, U.customer_id
+
+select U.username,U.role, U.customer_id , array_agg(A.account_id) accounts
+from users_s U LEFT OUTER JOIN accounts A 
+ON
+U.customer_id = A.customer_id
+group by U.username, U.role, U.customer_id
+
